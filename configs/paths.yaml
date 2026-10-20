@@ -1,0 +1,30 @@
+# Central dataset path configuration.
+#
+# This is the single place to point the code at your local dataset copies.
+# Edit each value below to wherever you downloaded/extracted that dataset.
+# Every config (training, eval, and annotation) reads these via the
+# `${data_path:<key>}` resolver, so you should not need to edit any other
+# config or pass per-dataset command-line overrides.
+#
+# See README.md ("Data Preparation" / "Evaluation Data") for download
+# instructions and the recommended on-disk layout for each dataset.
+
+# Ground-truth Kubric (MOVi) used for training/eval and the kubric/megasam_cmu
+# estimated-depth annotations.
+kubric_root: /data/user_data/ayushj2/tracking_datasets/kubric
+
+# CoTracker3 Kubric (the `kubric_long` provider).
+cotracker3_kubric_root: /data/group_data/katefgroup-ssd/datasets/tracking_datasets/CoTracker3_Kubric
+
+# Point Odyssey (data + the pod/megasam_cmu estimated annotations).
+pod_root: /data/user_data/ayushj2/tracking_datasets/pod_new
+
+# Dynamic Replica train split (data + the dr_train/pi3 estimated annotations).
+dynamic_replica_train_root: /data/group_data/katefgroup-ssd/datasets/tracking_datasets/dynamic_replica
+
+# Dynamic Replica valid split used for eval (data + the dr_val/megasam annotations).
+dynamic_replica_val_root: /data/user_data/ayushj2/tracking_datasets/dynamic_replica
+
+# TAP-Vid3D benchmark root (eval data + the adt/drivetrack/pstudio megasam/pi3
+# annotations, organized as <tapvid3d_root>/{adt,drivetrack,pstudio}).
+tapvid3d_root: /data/group_data/katefgroup/language_grounding/tracking_datasets/tapvid3d

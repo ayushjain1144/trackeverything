@@ -1,0 +1,7 @@
+name: dinov3_vit_adapter
+pretrained: true
+freeze: true
+output_dim: 128
+return_features_directly: false
+dinov3_name: dinov3_vits16
+use_vit_adapter: true

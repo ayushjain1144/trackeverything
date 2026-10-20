@@ -1,0 +1,7 @@
+name: vanilla
+latent_dim: 128
+nheads: 8
+dropout: 0.0
+num_layers: 6
+knn_spatial_attn: false
+k: 16

@@ -1,0 +1,1239 @@
+{
+  "version": 1,
+  "created_at": "2026-08-04 15:24:23",
+  "description": "Point Odyssey annotation corrections. In the affected sequences the extrinsics array is offset by one frame relative to the rendered images: extrinsics[t] is the pose that rendered frame t-1, while trajs_3d[t] is correctly indexed. Because trajs_2d == project(extrinsics @ trajs_3d), the 2D tracks drift off their object by f_px * theta pixels -- negligible when the camera is slow, several hundred pixels during a fast camera rotation. Repair: read camera arrays at t + cam_offset and recompute trajs_2d from them; invalidate the trailing frames that have no counterpart. visibs and trajs_3d are left unmodified.",
+  "pod_root_used_for_detection": "/data/user_data/ayushj2/tracking_datasets/pod_new",
+  "scans": [
+    {
+      "path": "/data/user_data/ayushj2/pod_corrections/alignment_final.json",
+      "params": {
+        "pod_root": "/data/user_data/ayushj2/tracking_datasets/pod_new",
+        "splits": "train,val",
+        "out": "/data/user_data/ayushj2/pod_corrections/alignment_final.json",
+        "workers": 8,
+        "n_probe_frames": 120,
+        "min_power_px": 4.0,
+        "rel_tol": 0.02,
+        "spike_threshold": 0.02,
+        "p_value_thresh": 0.001,
+        "seqs": null
+      },
+      "status_counts": {
+        "undetermined": 56,
+        "shifted": 28,
+        "aligned": 40,
+        "no_data": 22
+      }
+    },
+    {
+      "path": "/data/user_data/ayushj2/pod_corrections/alignment_fast.json",
+      "params": {
+        "pod_root": "/data/user_data/ayushj2/tracking_datasets/pod_new",
+        "splits": "train,val",
+        "out": "/data/user_data/ayushj2/pod_corrections/alignment_fast.json",
+        "workers": 8,
+        "n_probe_frames": 120,
+        "min_power_px": 40.0,
+        "rel_tol": 0.02,
+        "spike_threshold": 0.02,
+        "p_value_thresh": 0.001,
+        "seqs": null
+      },
+      "status_counts": {
+        "undetermined": 79,
+        "shifted": 19,
+        "aligned": 26,
+        "no_data": 22
+      }
+    }
+  ],
+  "n_sequences_considered": 146,
+  "n_sequences_corrected": 16,
+  "conflicts": [],
+  "validation_file": "/data/user_data/ayushj2/pod_corrections/validation.json",
+  "rejected_by_validation": {
+    "train/ani5_new_": "mean agreement delta -0.0001 < 0.0",
+    "train/ani6_new_f": "mean agreement delta -0.0011 < 0.0",
+    "train/ani7_new_f": "mean agreement delta -0.0039 < 0.0",
+    "train/animal1_s": "mean agreement delta -0.0053 < 0.0",
+    "train/animal3_s": "mean agreement delta -0.0036 < 0.0",
+    "train/r0_new": "mean agreement delta -0.0135 < 0.0",
+    "train/r3_new_f": "mean agreement delta -0.0066 < 0.0",
+    "train/r4_new_f": "mean agreement delta -0.0091 < 0.0",
+    "train/r6_new_f": "mean agreement delta -0.0037 < 0.0",
+    "train/r7_new": "mean agreement delta -0.0166 < 0.0",
+    "train/r7_new_": "mean agreement delta -0.0090 < 0.0",
+    "val/r1_new_": "mean agreement delta -0.0010 < 0.0",
+    "val/r1_new_f": "mean agreement delta -0.0018 < 0.0"
+  },
+  "sequences": {
+    "train/ani11_new_": {
+      "cam_offset": 1,
+      "n_frames": 1531,
+      "invalidate_frames": [
+        [
+          1530,
+          1530
+        ]
+      ],
+      "evidence": {
+        "spike": 0.2911,
+        "runner_up_spike": 0.0264,
+        "sign_test": {
+          "n": 12,
+          "n_better": 12,
+          "n_worse": 0,
+          "mean_delta": 0.30120492723560127,
+          "p_value": 0.00048828125
+        },
+        "median_power_px": 257.2,
+        "n_probe_frames": 15,
+        "cam_profile": [
+          0.2324,
+          0.2549,
+          0.2245,
+          0.1854,
+          0.5294,
+          0.2914,
+          0.3396
+        ],
+        "offsets": [
+          -3,
+          -2,
+          -1,
+          0,
+          1,
+          2,
+          3
+        ],
+        "source": "alignment_fast.json"
+      },
+      "visibility_unreliable_frames": [
+        [
+          359,
+          373
+        ]
+      ],
+      "validation": {
+        "mean_delta": 0.00101962369837921,
+        "median_delta": -0.00016931933626818108,
+        "frac_improved": 0.46184738955823296,
+        "n_better": 115,
+        "n_worse": 127,
+        "p_value": 0.47957668647454976,
+        "n_frames": 249,
+        "by_speed": {
+          "slow_lt15px": {
+            "n": 241,
+            "mean_delta": 0.0009642260468297393,
+            "frac_improved": 0.4605809128630705
+          },
+          "mid_15_60px": {
+            "n": 7,
+            "mean_delta": 0.0102914043469406,
+            "frac_improved": 0.5714285714285714
+          },
+          "fast_gt60px": {
+            "n": 1,
+            "mean_delta": -0.050532006818128083,
+            "frac_improved": 0.0
+          }
+        }
+      }
+    },
+    "train/ani15_new_": {
+      "cam_offset": 1,
+      "n_frames": 1271,
+      "invalidate_frames": [
+        [
+          1270,
+          1270
+        ]
+      ],
+      "evidence": {
+        "spike": 0.0402,
+        "runner_up_spike": 0.001,
+        "sign_test": {
+          "n": 117,
+          "n_better": 102,
+          "n_worse": 15,
+          "mean_delta": 0.032696690186084815,
+          "p_value": 4.4392579606968533e-17
+        },
+        "median_power_px": 13.8,
+        "n_probe_frames": 120,
+        "cam_profile": [
+          0.5,
+          0.5166,
+          0.5323,
+          0.5459,
+          0.5885,
+          0.5508,
+          0.533
+        ],
+        "offsets": [
+          -3,
+          -2,
+          -1,
+          0,
+          1,
+          2,
+          3
+        ],
+        "source": "alignment_final.json"
+      },
+      "visibility_unreliable_frames": [
+        [
+          155,
+          163
+        ]
+      ],
+      "validation": {
+        "mean_delta": 0.005652113483707091,
+        "median_delta": -0.00024726993903856354,
+        "frac_improved": 0.4899598393574297,
+        "n_better": 122,
+        "n_worse": 125,
+        "p_value": 0.8987706563307035,
+        "n_frames": 249,
+        "by_speed": {
+          "slow_lt15px": {
+            "n": 240,
+            "mean_delta": 0.005852443873711358,
+            "frac_improved": 0.49166666666666664
+          },
+          "mid_15_60px": {
+            "n": 9,
+            "mean_delta": 0.0003099697502599246,
+            "frac_improved": 0.4444444444444444
+          }
+        }
+      }
+    },
+    "train/ani17_new_": {
+      "cam_offset": 1,
+      "n_frames": 1437,
+      "invalidate_frames": [
+        [
+          1436,
+          1436
+        ]
+      ],
+      "evidence": {
+        "spike": 0.0297,
+        "runner_up_spike": 0.0013,
+        "sign_test": {
+          "n": 116,
+          "n_better": 98,
+          "n_worse": 11,
+          "mean_delta": 0.025989832294381652,
+          "p_value": 1.3281749873159828e-18
+        },
+        "median_power_px": 14.3,
+        "n_probe_frames": 120,
+        "cam_profile": [
+          0.4461,
+          0.4605,
+          0.4741,
+          0.4851,
+          0.5079,
+          0.4713,
+          0.4553
+        ],
+        "offsets": [
+          -3,
+          -2,
+          -1,
+          0,
+          1,
+          2,
+          3
+        ],
+        "source": "alignment_final.json"
+      },
+      "visibility_unreliable_frames": [
+        [
+          943,
+          953
+        ]
+      ],
+      "validation": {
+        "mean_delta": 0.007217752484090328,
+        "median_delta": 0.0028821439563198603,
+        "frac_improved": 0.532,
+        "n_better": 133,
+        "n_worse": 113,
+        "p_value": 0.22567092627640567,
+        "n_frames": 250,
+        "by_speed": {
+          "slow_lt15px": {
+            "n": 238,
+            "mean_delta": 0.008050927966641485,
+            "frac_improved": 0.5462184873949579
+          },
+          "mid_15_60px": {
+            "n": 11,
+            "mean_delta": 0.000491057642891661,
+            "frac_improved": 0.2727272727272727
+          },
+          "fast_gt60px": {
+            "n": 1,
+            "mean_delta": -0.11708436910989961,
+            "frac_improved": 0.0
+          }
+        }
+      }
+    },
+    "train/ani18_new_": {
+      "cam_offset": 1,
+      "n_frames": 1549,
+      "invalidate_frames": [
+        [
+          1548,
+          1548
+        ]
+      ],
+      "evidence": {
+        "spike": 0.1837,
+        "runner_up_spike": 0.0114,
+        "sign_test": {
+          "n": 16,
+          "n_better": 15,
+          "n_worse": 1,
+          "mean_delta": 0.17958556862513136,
+          "p_value": 0.000518798828125
+        },
+        "median_power_px": 156.4,
+        "n_probe_frames": 24,
+        "cam_profile": [
+          0.3214,
+          0.3377,
+          0.3314,
+          0.3241,
+          0.4956,
+          0.2997,
+          0.2954
+        ],
+        "offsets": [
+          -3,
+          -2,
+          -1,
+          0,
+          1,
+          2,
+          3
+        ],
+        "source": "alignment_fast.json"
+      },
+      "visibility_unreliable_frames": [
+        [
+          580,
+          607
+        ]
+      ],
+      "validation": {
+        "mean_delta": 0.007694804249839563,
+        "median_delta": 0.008375777737234691,
+        "frac_improved": 0.6854838709677419,
+        "n_better": 170,
+        "n_worse": 72,
+        "p_value": 2.584061026925238e-10,
+        "n_frames": 248,
+        "by_speed": {
+          "slow_lt15px": {
+            "n": 244,
+            "mean_delta": 0.0075851239705230855,
+            "frac_improved": 0.6844262295081968
+          },
+          "mid_15_60px": {
+            "n": 4,
+            "mean_delta": 0.014385301288144636,
+            "frac_improved": 0.75
+          }
+        }
+      }
+    },
+    "train/ani3_new_f": {
+      "cam_offset": 1,
+      "n_frames": 1789,
+      "invalidate_frames": [
+        [
+          1788,
+          1788
+        ]
+      ],
+      "evidence": {
+        "spike": 0.2478,
+        "runner_up_spike": -0.0025,
+        "sign_test": {
+          "n": 20,
+          "n_better": 20,
+          "n_worse": 0,
+          "mean_delta": 0.2507150959192058,
+          "p_value": 1.9073486328125e-06
+        },
+        "median_power_px": 119.7,
+        "n_probe_frames": 28,
+        "cam_profile": [
+          0.1519,
+          0.1565,
+          0.166,
+          0.1933,
+          0.4493,
+          0.2096,
+          0.1921
+        ],
+        "offsets": [
+          -3,
+          -2,
+          -1,
+          0,
+          1,
+          2,
+          3
+        ],
+        "source": "alignment_fast.json"
+      },
+      "visibility_unreliable_frames": [
+        [
+          536,
+          571
+        ]
+      ],
+      "validation": {
+        "mean_delta": 0.006260927997664044,
+        "median_delta": 0.0028303104691993486,
+        "frac_improved": 0.6048387096774194,
+        "n_better": 150,
+        "n_worse": 92,
+        "p_value": 0.00023314366555773962,
+        "n_frames": 248,
+        "by_speed": {
+          "slow_lt15px": {
+            "n": 242,
+            "mean_delta": 0.004915937431210924,
+            "frac_improved": 0.5991735537190083
+          },
+          "mid_15_60px": {
+            "n": 5,
+            "mean_delta": 0.0050050232107110015,
+            "frac_improved": 0.8
+          },
+          "fast_gt60px": {
+            "n": 1,
+            "mean_delta": 0.3380281690140845,
+            "frac_improved": 1.0
+          }
+        }
+      }
+    },
+    "train/ani5_new_f": {
+      "cam_offset": 1,
+      "n_frames": 2201,
+      "invalidate_frames": [
+        [
+          2200,
+          2200
+        ]
+      ],
+      "evidence": {
+        "spike": 0.1589,
+        "runner_up_spike": 0.0033,
+        "sign_test": {
+          "n": 18,
+          "n_better": 18,
+          "n_worse": 0,
+          "mean_delta": 0.14529572587612702,
+          "p_value": 7.62939453125e-06
+        },
+        "median_power_px": 137.4,
+        "n_probe_frames": 26,
+        "cam_profile": [
+          0.2907,
+          0.2807,
+          0.2641,
+          0.2937,
+          0.4305,
+          0.2494,
+          0.2841
+        ],
+        "offsets": [
+          -3,
+          -2,
+          -1,
+          0,
+          1,
+          2,
+          3
+        ],
+        "source": "alignment_fast.json"
+      },
+      "visibility_unreliable_frames": [
+        [
+          1572,
+          1602
+        ]
+      ],
+      "validation": {
+        "mean_delta": 0.004403582729913143,
+        "median_delta": 0.0022078235236530075,
+        "frac_improved": 0.6178861788617886,
+        "n_better": 152,
+        "n_worse": 92,
+        "p_value": 0.00014789780442954134,
+        "n_frames": 246,
+        "by_speed": {
+          "slow_lt15px": {
+            "n": 239,
+            "mean_delta": 0.006082996038366922,
+            "frac_improved": 0.6276150627615062
+          },
+          "mid_15_60px": {
+            "n": 4,
+            "mean_delta": 0.0015698177141249547,
+            "frac_improved": 0.25
+          },
+          "fast_gt60px": {
+            "n": 3,
+            "mean_delta": -0.12561132415585366,
+            "frac_improved": 0.3333333333333333
+          }
+        }
+      }
+    },
+    "train/ani6_new_": {
+      "cam_offset": 1,
+      "n_frames": 1703,
+      "invalidate_frames": [
+        [
+          1702,
+          1702
+        ]
+      ],
+      "evidence": {
+        "spike": 0.3115,
+        "runner_up_spike": 0.0128,
+        "sign_test": {
+          "n": 16,
+          "n_better": 16,
+          "n_worse": 0,
+          "mean_delta": 0.293587011720532,
+          "p_value": 3.0517578125e-05
+        },
+        "median_power_px": 157.5,
+        "n_probe_frames": 24,
+        "cam_profile": [
+          0.294,
+          0.2786,
+          0.2375,
+          0.248,
+          0.5799,
+          0.2889,
+          0.2904
+        ],
+        "offsets": [
+          -3,
+          -2,
+          -1,
+          0,
+          1,
+          2,
+          3
+        ],
+        "source": "alignment_fast.json"
+      },
+      "visibility_unreliable_frames": [
+        [
+          1039,
+          1066
+        ]
+      ],
+      "validation": {
+        "mean_delta": 0.0084146358765473,
+        "median_delta": 0.004384682841274468,
+        "frac_improved": 0.6546184738955824,
+        "n_better": 163,
+        "n_worse": 83,
+        "p_value": 3.7728925966281093e-07,
+        "n_frames": 249,
+        "by_speed": {
+          "slow_lt15px": {
+            "n": 244,
+            "mean_delta": 0.008190787873530584,
+            "frac_improved": 0.6557377049180327
+          },
+          "mid_15_60px": {
+            "n": 2,
+            "mean_delta": 0.0972132472827959,
+            "frac_improved": 1.0
+          },
+          "fast_gt60px": {
+            "n": 3,
+            "mean_delta": -0.03257813414892563,
+            "frac_improved": 0.3333333333333333
+          }
+        }
+      }
+    },
+    "train/ani7_new_": {
+      "cam_offset": 1,
+      "n_frames": 1591,
+      "invalidate_frames": [
+        [
+          1590,
+          1590
+        ]
+      ],
+      "evidence": {
+        "spike": 0.293,
+        "runner_up_spike": -0.003,
+        "sign_test": {
+          "n": 18,
+          "n_better": 18,
+          "n_worse": 0,
+          "mean_delta": 0.2930167048079279,
+          "p_value": 7.62939453125e-06
+        },
+        "median_power_px": 42.8,
+        "n_probe_frames": 18,
+        "cam_profile": [
+          0.126,
+          0.1274,
+          0.1349,
+          0.1686,
+          0.457,
+          0.1595,
+          0.1066
+        ],
+        "offsets": [
+          -3,
+          -2,
+          -1,
+          0,
+          1,
+          2,
+          3
+        ],
+        "source": "alignment_fast.json"
+      },
+      "visibility_unreliable_frames": [
+        [
+          533,
+          592
+        ]
+      ],
+      "validation": {
+        "mean_delta": 0.002328337278939449,
+        "median_delta": 0.0,
+        "frac_improved": 0.464,
+        "n_better": 116,
+        "n_worse": 120,
+        "p_value": 0.8452233668180922,
+        "n_frames": 250,
+        "by_speed": {
+          "slow_lt15px": {
+            "n": 237,
+            "mean_delta": -0.0012192435557906271,
+            "frac_improved": 0.45147679324894513
+          },
+          "mid_15_60px": {
+            "n": 13,
+            "mean_delta": 0.06700346480440317,
+            "frac_improved": 0.6923076923076923
+          }
+        }
+      }
+    },
+    "train/ani8_new_f": {
+      "cam_offset": 1,
+      "n_frames": 1537,
+      "invalidate_frames": [
+        [
+          1536,
+          1536
+        ]
+      ],
+      "evidence": {
+        "spike": 0.2838,
+        "runner_up_spike": 0.0013,
+        "sign_test": {
+          "n": 25,
+          "n_better": 25,
+          "n_worse": 0,
+          "mean_delta": 0.294482621679236,
+          "p_value": 5.960464477539063e-08
+        },
+        "median_power_px": 85.6,
+        "n_probe_frames": 33,
+        "cam_profile": [
+          0.2423,
+          0.2472,
+          0.265,
+          0.2804,
+          0.5822,
+          0.3163,
+          0.3193
+        ],
+        "offsets": [
+          -3,
+          -2,
+          -1,
+          0,
+          1,
+          2,
+          3
+        ],
+        "source": "alignment_fast.json"
+      },
+      "visibility_unreliable_frames": [
+        [
+          1333,
+          1381
+        ]
+      ],
+      "validation": {
+        "mean_delta": 0.006787643063494556,
+        "median_delta": 0.00637014734236957,
+        "frac_improved": 0.7032520325203252,
+        "n_better": 173,
+        "n_worse": 67,
+        "p_value": 5.517380913225862e-12,
+        "n_frames": 246,
+        "by_speed": {
+          "slow_lt15px": {
+            "n": 233,
+            "mean_delta": 0.00691152506669876,
+            "frac_improved": 0.7124463519313304
+          },
+          "mid_15_60px": {
+            "n": 9,
+            "mean_delta": 0.04959512827124573,
+            "frac_improved": 0.7777777777777778
+          },
+          "fast_gt60px": {
+            "n": 4,
+            "mean_delta": -0.09674532534059044,
+            "frac_improved": 0.0
+          }
+        }
+      }
+    },
+    "train/ani9_new_f": {
+      "cam_offset": 1,
+      "n_frames": 1303,
+      "invalidate_frames": [
+        [
+          1302,
+          1302
+        ]
+      ],
+      "evidence": {
+        "spike": 0.2976,
+        "runner_up_spike": -0.0001,
+        "sign_test": {
+          "n": 13,
+          "n_better": 13,
+          "n_worse": 0,
+          "mean_delta": 0.2238811860470362,
+          "p_value": 0.000244140625
+        },
+        "median_power_px": 197.7,
+        "n_probe_frames": 19,
+        "cam_profile": [
+          0.2361,
+          0.241,
+          0.246,
+          0.2514,
+          0.549,
+          0.2513,
+          0.2603
+        ],
+        "offsets": [
+          -3,
+          -2,
+          -1,
+          0,
+          1,
+          2,
+          3
+        ],
+        "source": "alignment_fast.json"
+      },
+      "visibility_unreliable_frames": [
+        [
+          231,
+          251
+        ]
+      ],
+      "validation": {
+        "mean_delta": 0.015140359492467202,
+        "median_delta": 0.015159746494631476,
+        "frac_improved": 0.712,
+        "n_better": 178,
+        "n_worse": 65,
+        "p_value": 2.474592492650931e-13,
+        "n_frames": 250,
+        "by_speed": {
+          "slow_lt15px": {
+            "n": 242,
+            "mean_delta": 0.015413350925730143,
+            "frac_improved": 0.7066115702479339
+          },
+          "mid_15_60px": {
+            "n": 5,
+            "mean_delta": 0.023984033800515413,
+            "frac_improved": 1.0
+          },
+          "fast_gt60px": {
+            "n": 3,
+            "mean_delta": -0.021620406637490375,
+            "frac_improved": 0.6666666666666666
+          }
+        }
+      }
+    },
+    "train/ani_s": {
+      "cam_offset": 1,
+      "n_frames": 1681,
+      "invalidate_frames": [
+        [
+          1680,
+          1680
+        ]
+      ],
+      "evidence": {
+        "spike": 0.0278,
+        "runner_up_spike": 0.0018,
+        "sign_test": {
+          "n": 113,
+          "n_better": 82,
+          "n_worse": 31,
+          "mean_delta": 0.02620272810643613,
+          "p_value": 1.730004378500178e-06
+        },
+        "median_power_px": 14.5,
+        "n_probe_frames": 120,
+        "cam_profile": [
+          0.4254,
+          0.4349,
+          0.4409,
+          0.4496,
+          0.4836,
+          0.4619,
+          0.4531
+        ],
+        "offsets": [
+          -3,
+          -2,
+          -1,
+          0,
+          1,
+          2,
+          3
+        ],
+        "source": "alignment_final.json"
+      },
+      "visibility_unreliable_frames": [
+        [
+          667,
+          691
+        ]
+      ],
+      "validation": {
+        "mean_delta": 0.0009615059857736516,
+        "median_delta": -0.0008043755779469919,
+        "frac_improved": 0.46987951807228917,
+        "n_better": 117,
+        "n_worse": 130,
+        "p_value": 0.4452053301681266,
+        "n_frames": 249,
+        "by_speed": {
+          "slow_lt15px": {
+            "n": 245,
+            "mean_delta": 0.001725795873893052,
+            "frac_improved": 0.4775510204081633
+          },
+          "mid_15_60px": {
+            "n": 2,
+            "mean_delta": -0.0032443873146591473,
+            "frac_improved": 0.0
+          },
+          "fast_gt60px": {
+            "n": 2,
+            "mean_delta": -0.08845811200842008,
+            "frac_improved": 0.0
+          }
+        }
+      }
+    },
+    "train/animal_": {
+      "cam_offset": 1,
+      "n_frames": 875,
+      "invalidate_frames": [
+        [
+          874,
+          874
+        ]
+      ],
+      "evidence": {
+        "spike": 0.0224,
+        "runner_up_spike": 0.0027,
+        "sign_test": {
+          "n": 120,
+          "n_better": 107,
+          "n_worse": 13,
+          "mean_delta": 0.022425665391874385,
+          "p_value": 1.4958728419663173e-19
+        },
+        "median_power_px": 13.1,
+        "n_probe_frames": 120,
+        "cam_profile": [
+          0.3628,
+          0.3838,
+          0.4089,
+          0.4301,
+          0.4512,
+          0.4273,
+          0.3981
+        ],
+        "offsets": [
+          -3,
+          -2,
+          -1,
+          0,
+          1,
+          2,
+          3
+        ],
+        "source": "alignment_final.json"
+      },
+      "visibility_unreliable_frames": [],
+      "validation": {
+        "mean_delta": 0.0076352924871047,
+        "median_delta": 0.007534129944088752,
+        "frac_improved": 0.724,
+        "n_better": 181,
+        "n_worse": 65,
+        "p_value": 7.73014315823262e-14,
+        "n_frames": 250,
+        "by_speed": {
+          "slow_lt15px": {
+            "n": 239,
+            "mean_delta": 0.00831862723213652,
+            "frac_improved": 0.7364016736401674
+          },
+          "mid_15_60px": {
+            "n": 11,
+            "mean_delta": -0.007211707882223039,
+            "frac_improved": 0.45454545454545453
+          }
+        }
+      }
+    },
+    "train/r3_new_": {
+      "cam_offset": 1,
+      "n_frames": 1521,
+      "invalidate_frames": [
+        [
+          1520,
+          1520
+        ]
+      ],
+      "evidence": {
+        "spike": 0.3557,
+        "runner_up_spike": 0.0218,
+        "sign_test": {
+          "n": 20,
+          "n_better": 19,
+          "n_worse": 1,
+          "mean_delta": 0.35509444138355184,
+          "p_value": 4.00543212890625e-05
+        },
+        "median_power_px": 135.6,
+        "n_probe_frames": 28,
+        "cam_profile": [
+          0.3516,
+          0.3398,
+          0.3629,
+          0.3423,
+          0.7069,
+          0.3602,
+          0.351
+        ],
+        "offsets": [
+          -3,
+          -2,
+          -1,
+          0,
+          1,
+          2,
+          3
+        ],
+        "source": "alignment_fast.json"
+      },
+      "visibility_unreliable_frames": [
+        [
+          1362,
+          1393
+        ]
+      ],
+      "validation": {
+        "mean_delta": 0.000983824252057041,
+        "median_delta": 0.0003033060357900963,
+        "frac_improved": 0.5140562248995983,
+        "n_better": 128,
+        "n_worse": 112,
+        "p_value": 0.3329330313349304,
+        "n_frames": 249,
+        "by_speed": {
+          "slow_lt15px": {
+            "n": 236,
+            "mean_delta": 0.0009442651168335556,
+            "frac_improved": 0.5
+          },
+          "mid_15_60px": {
+            "n": 10,
+            "mean_delta": 0.01808150249689906,
+            "frac_improved": 0.9
+          },
+          "fast_gt60px": {
+            "n": 3,
+            "mean_delta": -0.05289645125983552,
+            "frac_improved": 0.3333333333333333
+          }
+        }
+      }
+    },
+    "val/ani10_new_f": {
+      "cam_offset": 1,
+      "n_frames": 1669,
+      "invalidate_frames": [
+        [
+          1668,
+          1668
+        ]
+      ],
+      "evidence": {
+        "spike": 0.0959,
+        "runner_up_spike": 0.0238,
+        "sign_test": {
+          "n": 31,
+          "n_better": 28,
+          "n_worse": 2,
+          "mean_delta": 0.10889099821554125,
+          "p_value": 8.67992639541626e-07
+        },
+        "median_power_px": 70.3,
+        "n_probe_frames": 39,
+        "cam_profile": [
+          0.3741,
+          0.3895,
+          0.3909,
+          0.3447,
+          0.4318,
+          0.3272,
+          0.3254
+        ],
+        "offsets": [
+          -3,
+          -2,
+          -1,
+          0,
+          1,
+          2,
+          3
+        ],
+        "source": "alignment_fast.json"
+      },
+      "visibility_unreliable_frames": [
+        [
+          433,
+          492
+        ]
+      ],
+      "validation": {
+        "mean_delta": 0.008813155994846014,
+        "median_delta": 0.007190022010271413,
+        "frac_improved": 0.6746987951807228,
+        "n_better": 168,
+        "n_worse": 74,
+        "p_value": 1.4137064360330624e-09,
+        "n_frames": 249,
+        "by_speed": {
+          "slow_lt15px": {
+            "n": 237,
+            "mean_delta": 0.01062667220121876,
+            "frac_improved": 0.6708860759493671
+          },
+          "mid_15_60px": {
+            "n": 11,
+            "mean_delta": 0.00451876912335433,
+            "frac_improved": 0.8181818181818182
+          },
+          "fast_gt60px": {
+            "n": 1,
+            "mean_delta": -0.37375192932908613,
+            "frac_improved": 0.0
+          }
+        }
+      }
+    },
+    "val/ani1_new_": {
+      "cam_offset": 1,
+      "n_frames": 1181,
+      "invalidate_frames": [
+        [
+          1180,
+          1180
+        ]
+      ],
+      "evidence": {
+        "spike": 0.3256,
+        "runner_up_spike": 0.0083,
+        "sign_test": {
+          "n": 21,
+          "n_better": 20,
+          "n_worse": 1,
+          "mean_delta": 0.3734379648144407,
+          "p_value": 2.09808349609375e-05
+        },
+        "median_power_px": 121.2,
+        "n_probe_frames": 29,
+        "cam_profile": [
+          0.2041,
+          0.1967,
+          0.1728,
+          0.185,
+          0.5251,
+          0.2138,
+          0.2261
+        ],
+        "offsets": [
+          -3,
+          -2,
+          -1,
+          0,
+          1,
+          2,
+          3
+        ],
+        "source": "alignment_fast.json"
+      },
+      "visibility_unreliable_frames": [
+        [
+          451,
+          485
+        ]
+      ],
+      "validation": {
+        "mean_delta": 0.012115377503301123,
+        "median_delta": 0.011697807870442,
+        "frac_improved": 0.8870967741935484,
+        "n_better": 220,
+        "n_worse": 20,
+        "p_value": 9.106916946901507e-44,
+        "n_frames": 248,
+        "by_speed": {
+          "slow_lt15px": {
+            "n": 231,
+            "mean_delta": 0.014581610366056973,
+            "frac_improved": 0.9264069264069265
+          },
+          "mid_15_60px": {
+            "n": 13,
+            "mean_delta": 0.013599490641745055,
+            "frac_improved": 0.46153846153846156
+          },
+          "fast_gt60px": {
+            "n": 4,
+            "mean_delta": -0.13513293802079196,
+            "frac_improved": 0.0
+          }
+        }
+      }
+    },
+    "val/ani3_new_": {
+      "cam_offset": 1,
+      "n_frames": 2379,
+      "invalidate_frames": [
+        [
+          2378,
+          2378
+        ]
+      ],
+      "evidence": {
+        "spike": 0.1058,
+        "runner_up_spike": 0.0019,
+        "sign_test": {
+          "n": 107,
+          "n_better": 81,
+          "n_worse": 26,
+          "mean_delta": 0.1008308481849618,
+          "p_value": 9.374509128245465e-08
+        },
+        "median_power_px": 18.3,
+        "n_probe_frames": 115,
+        "cam_profile": [
+          0.3858,
+          0.3889,
+          0.3882,
+          0.4002,
+          0.5015,
+          0.3912,
+          0.3708
+        ],
+        "offsets": [
+          -3,
+          -2,
+          -1,
+          0,
+          1,
+          2,
+          3
+        ],
+        "source": "alignment_final.json"
+      },
+      "visibility_unreliable_frames": [
+        [
+          861,
+          922
+        ]
+      ],
+      "validation": {
+        "mean_delta": 0.004053522946520989,
+        "median_delta": 0.001983283751239573,
+        "frac_improved": 0.6024096385542169,
+        "n_better": 150,
+        "n_worse": 88,
+        "p_value": 7.043833424718466e-05,
+        "n_frames": 249,
+        "by_speed": {
+          "slow_lt15px": {
+            "n": 241,
+            "mean_delta": 0.003034175894672727,
+            "frac_improved": 0.6016597510373444
+          },
+          "mid_15_60px": {
+            "n": 7,
+            "mean_delta": 0.010853871828317168,
+            "frac_improved": 0.5714285714285714
+          },
+          "fast_gt60px": {
+            "n": 1,
+            "mean_delta": 0.20211372026937868,
+            "frac_improved": 1.0
+          }
+        }
+      }
+    }
+  },
+  "excluded_sequences": {
+    "val/scene_recording_20210910_S05_S06_0_ego1": {
+      "reason": "temporally incoherent camera extrinsics",
+      "evidence": "per-frame best sub-frame offset alpha spans [-1.0, +1.5]; 40% of 60 probe frames have |alpha| >= 0.5 vs 3% for scene_d78_ego1 and 0% for cnb_dlab_0225_ego2. Median alpha is 0.0, so integer offset tests report 'aligned'.",
+      "corroborating": "18-42% of query points unprojectable vs ~10% elsewhere; 6 of the 30 worst val spikes, with an inverted profile (3D err 0.019-0.034, 2D err 6.9-18.0 px median)",
+      "not_repairable_by": "integer cam_offset re-indexing",
+      "doc": "docs/pod_known_bad_sequences.md"
+    }
+  }
+}

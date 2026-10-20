@@ -1,0 +1,24 @@
+defaults:
+  - eval_base
+
+provider_config:
+  # name: kubric_adam
+  name: kubric
+  stride: 1
+  override_anno: null
+  config:
+    # data_root: /home/ayushjain1144/kubric
+    # data_root: /data/user_data/ayushj2/kubric
+    data_root: ${data_path:kubric_root}
+    split: "valid"
+    is_train: False
+    is_overfit: False
+    dynamic_filter_threshold: 0.1
+
+epoch_len: 100
+frames_per_sample: -1
+query_mode: first_visible
+scale_factor: 4
+transform:
+  - name: set_roi
+    kwargs: {}

@@ -1,0 +1,23 @@
+defaults:
+  - encoder: dinov3
+  - point_updater: endpoint_decoder
+  - point_attention: vanilla
+
+name: track_everything
+
+seq_len: 16
+center_rgb: false
+voxelize: true
+voxel_size: 0.02
+voxel_mode: uniform
+voxelize_on_endpoints: false
+residual_unvoxelize: true
+memory_merge_mode: all
+use_waft: true
+use_query_points: true
+use_only_query_points: false
+use_warped_coords: true
+dense_tracking_at_eval: false
+sparse_tracking: false
+dynamic_threshold: 0.5
+mem_efficient: true

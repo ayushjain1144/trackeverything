@@ -1,0 +1,24 @@
+defaults:
+  - eval_base
+
+provider_config:
+  name: tapvid3d
+  stride: 1
+  override_anno: adt_minival/megasam
+  config:
+    data_root: ${data_path:tapvid3d_root}
+    split: "minival"
+    subset: "adt"
+    
+transform:
+  - name: resize
+    kwargs:
+      target_hw: [384, 512]
+  - name: filter_edge
+    kwargs: 
+      depth_rtol: 0.08
+      normal_tol: 15.0
+  - name: set_roi
+    kwargs: {}
+
+query_mode: pass_through

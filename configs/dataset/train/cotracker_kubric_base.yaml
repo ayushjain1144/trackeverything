@@ -1,0 +1,58 @@
+type: train
+
+seed: 42
+resolution: [384, 512]
+num_threads: 8
+different_seeds_per_epoch: False
+scale_factor: 1
+
+traj_sampling:
+  traj_mode: "visible_first+visible_middle"
+  query_mode: cotracker
+  outlier_threshold: 1000.0 # in pixels
+  min_visible_ratio: 0.2
+  mask_negative_depth: true
+  only_dynamic: false
+
+transform:
+  # - name: eraser
+  #   kwargs:
+  #     prob: 0.5
+  #     bounds: [2, 100]
+  #     max: 10
+  # replace is disabled in https://github.com/facebookresearch/co-tracker/blob/main/cotracker/datasets/kubric_movif_dataset.py#L40
+  # - name: replace
+  #   kwargs:
+  #     prob: 0.5
+  #     bounds: [2, 100]
+  #     max: 10
+  #     color_jitter_kwargs:
+  #       brightness: 0.2
+  #       contrast: 0.2
+  #       saturation: 0.2
+  #       hue: 0.0796
+  - name: color_jitter
+    kwargs:
+      prob: 0.25
+      brightness: 0.2
+      contrast: 0.2
+      saturation: 0.2
+      hue: 0.0796
+  - name: blur
+    kwargs:
+      prob: 0.25
+      kernel_size: 11
+      sigma: [0.1, 2.0]
+  # The following settings should be adjusted for each dataset
+  - name: spatial
+    kwargs:
+      pad_bounds: [0, 25]
+      resize_lim: [0.75, 1.25]
+      resize_delta: 0.05
+      max_crop_offset: 15
+      h_flip_prob: 0.5
+      v_flip_prob: 0.5
+      t_flip_prob: 0.5
+
+resize:
+  mode: "none"

@@ -1,0 +1,9 @@
+name: point_odyssey
+override_anno: null
+data_root: /data/user_data/ayushj2/tracking_datasets/pod_new
+is_train: true
+is_overfit: false
+split: "train"
+dynamic_filter_threshold: 0.05
+keep_static_prob: 1.0
+valid_depth_range: [0.001, 10.0]

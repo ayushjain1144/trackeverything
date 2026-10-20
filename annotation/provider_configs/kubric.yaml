@@ -1,0 +1,7 @@
+name: kubric
+override_anno: null
+data_root: /data/user_data/ayushj2/tracking_datasets/kubric
+keep_static_prob: 1.0 # no dynamic filter
+dynamic_filter_threshold: 0.1
+is_train: true
+is_overfit: false

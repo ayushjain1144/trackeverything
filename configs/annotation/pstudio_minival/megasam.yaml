@@ -1,0 +1,6 @@
+annotator_name: ${oc.env:ANNOTATOR_NAME,megasam}
+
+overrides:
+  depths: ${data_path:tapvid3d_root}/pstudio
+  extrinsics: ${data_path:tapvid3d_root}/pstudio
+  # intrinsics: /data/group_data/katefgroup/language_grounding/tracking_datasets/tapvid3d/pstudio

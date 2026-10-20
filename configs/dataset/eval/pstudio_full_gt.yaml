@@ -1,0 +1,19 @@
+defaults:
+  - eval_base
+
+provider_config:
+  name: tapvid3d
+  stride: 1
+  override_anno: null
+  config:
+    data_root: ${data_path:tapvid3d_root}
+    split: "full"
+    subset: "pstudio"
+    
+# transform:
+#   - name: filter_edge
+#     kwargs: 
+#       depth_rtol: 0.07
+#       normal_tol: 5
+
+query_mode: pass_through

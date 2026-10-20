@@ -1,0 +1,22 @@
+defaults:
+  - eval_base
+
+provider_config:
+  # name: dynreplica_adam #dynamic_replica
+  name: dynamic_replica
+  stride: 1
+  override_anno: null
+  config:
+    data_root: ${data_path:dynamic_replica_val_root}
+    split: "valid"
+    max_trajs_per_sample: 256
+    is_train: false
+    is_overfit: False
+    dynamic_filter_threshold: 0.01
+
+frames_per_sample: -1
+query_mode: first_visible
+scale_factor: 4
+transform:
+  - name: set_roi
+    kwargs: {}

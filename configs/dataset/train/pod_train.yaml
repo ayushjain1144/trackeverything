@@ -1,0 +1,22 @@
+defaults:
+  - cotracker_kubric_base
+
+epoch_len: 1000000
+frames_per_sample: 24
+
+traj_sampling:
+  num_traj: 384 # null to keep all trajectories
+
+providers_config:
+  - name: point_odyssey
+    stride: 1
+    weight: 1.0
+    override_anno: null
+    config:
+      data_root: ${data_path:pod_root}
+      split: "train"
+      dynamic_filter_threshold: 0.05
+      keep_static_prob: 1.0
+      valid_depth_range: [0.001, 10.0]
+      is_overfit: ${overfit}
+      is_train: true

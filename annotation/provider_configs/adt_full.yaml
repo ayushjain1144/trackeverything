@@ -1,0 +1,5 @@
+name: tapvid3d
+override_anno: null
+data_root: "/data/group_data/katefgroup/language_grounding/tracking_datasets/tapvid3d"
+split: "full"
+subset: "adt"

@@ -1,0 +1,8 @@
+name: dynamic_replica
+override_anno: null
+data_root: /data/group_data/katefgroup-ssd/datasets/tracking_datasets/dynamic_replica
+split: "train"
+keep_static_prob: 1.0 # no dynamic filter
+dynamic_filter_threshold: 0.01
+is_train: true
+is_overfit: false

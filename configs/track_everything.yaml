@@ -1,0 +1,242 @@
+# TrackEverything train/eval config. DINOv3 encoder, endpoint decoder.
+
+defaults:
+  - dataset/train/pod_train@train_dataset.pod_train
+  - dataset/train/dynamic_replica@train_dataset.dynamic_replica_train
+  - dataset/train/cotracker_kubric_24frames_384trajs_10Msamples@train_dataset.kubric_long
+  - dataset/eval/kubric_eval@test_datasets.kubric_eval
+  - dataset/eval/dr_valid_firstvisible_gt@test_datasets.dynamic_replica
+  - dataset/eval/pod_eval@test_datasets.pod_eval
+  - dataset/eval/pstudio_minival_megasam@test_datasets.pstudio_minival_megasam
+  - dataset/eval/pstudio_full_gt@test_datasets.pstudio_full_gt
+  - dataset/eval/pstudio_full_megasam@test_datasets.pstudio_full_megasam
+  - dataset/eval/adt_minival_megasam@test_datasets.adt_minival_megasam
+  - dataset/eval/adt_minival_gt@test_datasets.adt_minival_gt
+  - dataset/eval/adt_full_gt@test_datasets.adt_full_gt
+  - dataset/eval/adt_full_megasam@test_datasets.adt_full_megasam
+  - dataset/eval/drivetrack_minival_megasam@test_datasets.drivetrack_minival_megasam
+  - dataset/eval/drivetrack_full_gt@test_datasets.drivetrack_full_gt
+  - dataset/eval/drivetrack_full_megasam@test_datasets.drivetrack_full_megasam
+  - model: track_everything
+  - override model/encoder: dinov3
+  - override hydra/hydra_logging: none
+  - override hydra/job_logging: none
+  - _self_
+
+overfit: false
+seed: 42
+eval_only: false
+experiment_name: track_everything
+experiment_id: track_everything_v1
+# Checkpoints and TensorBoard logs. Override with output_dir=/path/to/logs.
+output_dir: outputs/tracking_logs
+slurm_job_id: null
+model:
+  seq_len: 16
+  center_rgb: false
+  voxel_size: 0.02
+  use_waft: true
+  use_query_points: true
+  point_attention:
+    name: spatial_dino
+  point_updater:
+    name: endpoint_decoder
+  encoder:
+    output_dim: 384
+wandb:
+  enable: true
+  project: from_scratch
+  entity: track3r
+  log_code: false
+tb:
+  enable: true
+criterion:
+  gamma: 0.8
+  traj_visible_weight: 0.0
+  traj_invisible_weight: 0.0
+  bce_weight: 0.015
+  traj_weight: 1.0
+  traj_2d_weight: 1.0
+  dynamic_bce_weight: 0.015
+  compute_2d_loss: true
+  log_loss: true
+  use_conf_regression_loss: false
+train:
+  additional_transform: null
+  optimizer_name: adamw
+  optimizer_kwargs: null
+  lr: 5e-5
+  weight_decay: 0.0005
+  scheduler_name: constant_with_warmup
+  scheduler_kwargs:
+    num_warmup_steps: 2000
+  mixed_precision: bf16
+  checkpoint: null
+  # When true (default), resume restores Adam moments. train.lr is applied unless
+  # this run also resumes a live scheduler (constant scheduler always honors train.lr).
+  # Set false to load weights only (cold Adam; can collapse a trained run).
+  resume_load_optimizer: true
+  batch_size: 1
+  num_workers: 4
+  prefetch_factor: 2
+  save_freq: 8000
+  eval_freq: 8000
+  visualize_nbatches: 3
+  gradient_accumulation_steps: 1
+  train_iters: 3
+  eval_iters: 3
+  max_grad_norm: 1.0
+  multi_backward: true
+  bidirectional_eval: false
+  warmup_frames: 0
+  train_steps: 400000
+  disable_backprop_through_time: true
+  dataset_overrides:
+    scene_transform_augs: null
+    frames_per_sample: 32
+    traj_sampling:
+      num_traj: 512
+    scale_and_cam0_align: true
+    compute_tmaps: true
+    compute_dense_trajs_3d: true
+    train_on_key_frames: true
+    model_seq_len: ${model.seq_len}
+    num_dense_sample_points: 256
+  evaluate_with_query_points: true
+  visualize_geometry: false
+  visualize_dynamic_classification: false
+  eval_modes:
+  - query
+  - dense_sample
+  visualize_eval_modes:
+  - query
+  - dense_sample
+hydra:
+  output_subdir: null
+  run:
+    dir: /tmp
+resolution:
+- 384
+- 512
+train_dataset:
+  kubric_long:
+    subsample_query_trajs: true
+    scale_factor: 4
+    transform:
+    - name: eraser
+      kwargs:
+        prob: 0.5
+        bounds:
+        - 2
+        - 100
+        max: 10
+    - name: color_jitter
+      kwargs:
+        prob: 0.25
+        brightness: 0.2
+        contrast: 0.2
+        hue: 0.0796
+        saturation: 0.2
+    - name: blur
+      kwargs:
+        prob: 0.25
+        kernel_size: 11
+        sigma:
+        - 0.1
+        - 2.0
+    - name: blur_depth
+      kwargs:
+        prob: 0.5
+        gn_kernel_range:
+        - 7
+        - 15
+    resize:
+      mode: simple_resize
+    providers_config:
+    - name: kubric_adam
+      stride: 1
+      weight: 1.0
+      override_anno: null
+      config:
+        data_root: ${data_path:cotracker3_kubric_root}
+        is_train: true
+        is_overfit: ${overfit}
+        keep_static_prob: 1.0
+        dynamic_filter_threshold: 0.1
+  pod_train:
+    subsample_query_trajs: true
+    scale_factor: 4
+    transform:
+    - name: eraser
+      kwargs:
+        prob: 0.5
+        bounds:
+        - 2
+        - 100
+        max: 10
+    - name: color_jitter
+      kwargs:
+        prob: 0.25
+        brightness: 0.2
+        contrast: 0.2
+        hue: 0.0796
+        saturation: 0.2
+    - name: blur
+      kwargs:
+        prob: 0.25
+        kernel_size: 11
+        sigma:
+        - 0.1
+        - 2.0
+    resize:
+      mode: simple_resize
+  dynamic_replica_train:
+    subsample_query_trajs: true
+    scale_factor: 4
+    transform:
+    - name: eraser
+      kwargs:
+        prob: 0.5
+        bounds:
+        - 2
+        - 100
+        max: 10
+    - name: color_jitter
+      kwargs:
+        prob: 0.25
+        brightness: 0.2
+        contrast: 0.2
+        hue: 0.0796
+        saturation: 0.2
+    - name: blur
+      kwargs:
+        prob: 0.25
+        kernel_size: 11
+        sigma:
+        - 0.1
+        - 2.0
+    resize:
+      mode: simple_resize
+test_datasets:
+  pod_eval:
+    frames_per_sample: 720
+train_datasets:
+- pod_train
+- dynamic_replica_train
+- kubric_long
+eval_datasets:
+- kubric_eval
+- dynamic_replica
+- pod_eval
+- pstudio_minival_megasam
+- adt_minival_megasam
+- drivetrack_minival_megasam
+eval:
+  dataset_overrides:
+    scale_and_cam0_align: true
+    compute_tmaps: true
+    compute_dense_trajs_3d: true
+    eval_on_key_frames:
+    - -1
+    model_seq_len: ${model.seq_len}
+    num_dense_sample_points: 256

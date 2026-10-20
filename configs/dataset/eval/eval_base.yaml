@@ -1,0 +1,4 @@
+type: eval
+
+resolution: [384, 512]
+num_threads: 4

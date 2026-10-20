@@ -1,0 +1,26 @@
+defaults:
+  - eval_base
+
+provider_config:
+  # name: kubric_adam
+  name: point_odyssey
+  stride: 1
+  weight: 1.0
+  override_anno: null
+  config:
+    # data_root: /home/ayushjain1144/kubric
+    # data_root: /data/user_data/ayushj2/kubric
+    data_root: ${data_path:pod_root}
+    split: "val"
+    is_train: False
+    is_overfit: False
+    dynamic_filter_threshold: 0.05
+    keep_static_prob: 1.0
+    valid_depth_range: [0.001, 10.0]
+
+frames_per_sample: -1
+query_mode: first_visible
+scale_factor: 4
+transform:
+  - name: set_roi
+    kwargs: {}

@@ -1,0 +1,8 @@
+name: dynamic_replica
+override_anno: null
+data_root: /data/user_data/ayushj2/tracking_datasets/dynamic_replica
+split: "valid"
+keep_static_prob: 1.0 # no dynamic filter
+dynamic_filter_threshold: 0.01
+is_train: false
+is_overfit: false

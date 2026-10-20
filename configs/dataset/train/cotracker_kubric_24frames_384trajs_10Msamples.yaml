@@ -1,0 +1,18 @@
+defaults:
+  - cotracker_kubric_base
+
+epoch_len: 1000000
+frames_per_sample: 24
+
+traj_sampling:
+  num_traj: 384 # null to keep all trajectories
+
+providers_config:
+  - name: kubric
+    stride: 1
+    weight: 1.0
+    override_anno: null
+    config:
+      data_root: ${data_path:kubric_root}
+      keep_static_prob: 1.0 # no dynamic filter
+      dynamic_filter_threshold: 0.1

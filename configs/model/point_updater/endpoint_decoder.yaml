@@ -1,0 +1,6 @@
+
+name: endpoint_decoder
+input_dim: 128
+hidden_size: 256
+output_dim: 5
+conf_activation: expp1

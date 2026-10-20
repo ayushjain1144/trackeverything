@@ -1,0 +1,17 @@
+type: train
+
+seed: 42
+resolution: [384, 512]
+num_threads: 8
+different_seeds_per_epoch: False
+
+traj_sampling:
+  traj_mode: "visible_first+visible_middle"
+  query_mode: cotracker
+  outlier_threshold: 1000.0 # in pixels
+  min_visible_ratio: 0.2
+  mask_negative_depth: true
+
+resize:
+  mode: "aug_crop" # aug_crop or simple_resize
+  aug_crop: [0.6, 1.0]
