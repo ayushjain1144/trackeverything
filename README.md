@@ -15,7 +15,7 @@
 
 <sup>1</sup>Carnegie Mellon University · <sup>2</sup>Meta
 
-[Project Page](https://trackeverything.github.io/) · [Paper](https://arxiv.org/abs/2609.30222) · [Model](https://huggingface.co/katefgroup/TrackEverything)
+[Project Page](https://trackeverything.github.io/) · [Paper](https://arxiv.org/abs/2609.30222) · [Model](https://huggingface.co/katefgroup/TrackEverything) · [Demo](https://huggingface.co/spaces/hugging-apps/trackeverything)
 
 <br>
 
@@ -70,6 +70,8 @@ toolkit matching the Torch build (12.9 above) if `nvcc` is not already on `PATH`
 ---
 
 ## Inference (`demo.py` & `demo_hf.py`)
+
+To try the model on your own video without installing anything, use the hosted [demo](https://huggingface.co/spaces/hugging-apps/trackeverything).
 
 We provide two entry points for inference depending on your workflow:
 - **`demo.py`**: Runs tracking on a video and visualizes the results (Rerun 3D viewer, 2D overlay MP4 videos, optional Weights & Biases logging).
