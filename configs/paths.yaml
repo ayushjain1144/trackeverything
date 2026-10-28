@@ -28,3 +28,10 @@ dynamic_replica_val_root: /data/user_data/ayushj2/tracking_datasets/dynamic_repl
 # TAP-Vid3D benchmark root (eval data + the adt/drivetrack/pstudio megasam/pi3
 # annotations, organized as <tapvid3d_root>/{adt,drivetrack,pstudio}).
 tapvid3d_root: /data/group_data/katefgroup/language_grounding/tracking_datasets/tapvid3d
+
+# Multiview Panoptic Studio, organized as
+# <root>/<sequence>/{ims,dynamic3dgs_depth,tapvid3d_annotations.npz}.
+panoptic_multiview_root: /data/group_data/katefgroup-ssd/datasets/tracking_datasets/multiview_datasets/datasets/panoptic-multiview
+
+# Multiview DexYCB, organized as <root>/<sequence>/view_*.
+dexycb_multiview_root: /data/group_data/katefgroup-ssd/datasets/tracking_datasets/multiview_datasets/datasets/dex-ycb-multiview

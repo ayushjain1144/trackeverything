@@ -762,6 +762,15 @@ class TrainTester(BaseTrainTester):
                     torch.cuda.synchronize()
                     torch.cuda.reset_peak_memory_stats(device)
                 t_infer0 = time.perf_counter()
+                _num_views = int(getattr(sample, "num_views", None) or 1)
+                assert not (bidirectional_eval and _num_views > 1), (
+                    "bidirectional_eval reverses the flat time axis, which "
+                    "reverses the cameras within each timestep too; disable it "
+                    "for multiview eval"
+                )
+                # num_views is only accepted by TrackEverythingMultiView
+                # (model.name=track_everything_multiview).
+                _extra_kwargs = {} if _num_views == 1 else {"num_views": _num_views}
                 preds, train_data = model(
                     rgb_obs=est_sample.rgbs,
                     depth_obs=est_sample.depths_downsampled,
@@ -772,6 +781,7 @@ class TrainTester(BaseTrainTester):
                     dense_norm_mask=est_sample.dense_norm_mask,
                     tgt_time_step_dense=est_sample.tgt_time_step_scenes,
                     dense_sample_points=est_sample.dense_sample_points,
+                    **_extra_kwargs,
                 )
                 if (
                     bidirectional_eval
@@ -952,6 +962,20 @@ class TrainTester(BaseTrainTester):
                             visibs=preds.query_visibs,
                             is_dynamic=preds.is_dynamic,
                         )
+                        if _num_views > 1:
+                            # The model predicts one position and one visibility
+                            # per timestep, replicated across that timestep's
+                            # cameras, while GT visibility is per image. Score
+                            # camera 0's frames, which is also the metric the
+                            # single-camera run reports.
+                            sample_q = sample_q.select_camera(0, _num_views)
+                            preds_q = Prediction(
+                                coords=preds_q.coords[:, ::_num_views],
+                                visibs=preds_q.visibs[:, ::_num_views]
+                                if preds_q.visibs is not None
+                                else None,
+                                is_dynamic=preds_q.is_dynamic,
+                            )
                         eval_variants["query"] = (
                             sample_q,
                             preds_q,

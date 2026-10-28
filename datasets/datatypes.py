@@ -275,6 +275,10 @@ class SliceData:
     dense_sample_visibs: Optional[torch.Tensor] = None  # (t, m)
     dense_sample_valids: Optional[torch.Tensor] = None  # (t, m)
     dense_sample_dynamic: Optional[torch.Tensor] = None  # (m,)
+    # Cameras per timestep. When > 1 the time axis of every (t, ...) field above
+    # holds num_views images per timestep, in time-major order
+    # (t = frame * num_views + view). 1 or None means single-camera.
+    num_views: Optional[int] = None
     flags: List[str] = dataclasses.field(default_factory=list)
     skip_post_init: bool = False
 
@@ -422,7 +426,13 @@ class SliceData:
             elif field.name == "segmentation" and batch[0].segmentation is None:
                 assert all(item.segmentation is None for item in batch)
                 kwargs[field.name] = None
-            elif field.name in ["annot_mode", "same_scale", "flags", "skip_post_init"]:
+            elif field.name in [
+                "annot_mode",
+                "same_scale",
+                "flags",
+                "skip_post_init",
+                "num_views",
+            ]:
                 assert all(
                     getattr(item, field.name) == batch[0].__dict__[field.name]
                     for item in batch
@@ -466,6 +476,94 @@ class SliceData:
         d = self.__dict__.copy()
         if "skip_post_init" in d:
             d["skip_post_init"] = True
+        r = SliceData(**d)
+        r.skip_post_init = self.skip_post_init
+        return r
+
+    # Fields whose time axis is axis 1 when batched (axis 0 otherwise).
+    _TIME_AXIS_FIELDS = (
+        "visibs",
+        "valids",
+        "rgbs",
+        "gt_trajs_3d",
+        "gt_trajs_2d",
+        "est_trajs_3d",
+        "gt_depths",
+        "gt_depths_downsampled",
+        "gt_intrinsics",
+        "gt_intrinsics_downsampled",
+        "gt_extrinsics",
+        "est_depths",
+        "est_depths_downsampled",
+        "est_intrinsics",
+        "est_intrinsics_downsampled",
+        "est_extrinsics",
+        "bg_mask",
+        "bg_mask_downsampled",
+        "query_indices",
+        "traj_norm_mask",
+        "dense_norm_mask",
+        "segmentation",
+        "dense_sample_trajs_3d",
+        "dense_sample_visibs",
+        "dense_sample_valids",
+    )
+
+    def select_camera(self, view: int, num_views: int) -> "SliceData":
+        """Keep one camera's images from a multiview time axis.
+
+        With ``num_views`` cameras the time axis holds ``num_views`` images per
+        timestep in time-major order, so camera ``view`` is
+        ``[view::num_views]``. Query times are image indices and are divided
+        down to timestep indices, which is exact because ``EvalDataset`` authors
+        every multiview query in camera 0. ``is_dynamic`` is per-track, not
+        per-frame, so it is left alone.
+
+        The result has ``num_views=1`` and is indistinguishable from a genuine
+        single-camera sample.
+        """
+        if num_views == 1:
+            return self.copy()
+
+        batched = len(self.rgbs.shape) == 5
+        T = self.rgbs.shape[1 if batched else 0]
+        assert T % num_views == 0, f"time axis {T} not divisible by {num_views}"
+        assert 0 <= view < num_views, f"view {view} out of range for {num_views}"
+
+        for name in (
+            "dense_trajs_3d",
+            "est_dense_trajs_3d",
+            "dense_valids",
+            "dense_visibs",
+            "dense_dynamic",
+            "tgt_time_step_scenes",
+            "dense_sample_points",
+        ):
+            v = getattr(self, name)
+            # These index time twice, or index into time, so a single-axis
+            # stride would silently corrupt them.
+            assert v is None or (isinstance(v, list) and v[0] is None), (
+                f"select_camera does not support {name}; it is set on this sample"
+            )
+
+        sel = slice(view, None, num_views)
+        d = self.__dict__.copy()
+        for name in self._TIME_AXIS_FIELDS:
+            v = d.get(name)
+            if not isinstance(v, torch.Tensor):
+                continue
+            d[name] = v[:, sel] if batched else v[sel]
+
+        for name in ("gt_query_point", "est_query_point"):
+            v = d.get(name)
+            if not isinstance(v, torch.Tensor):
+                continue
+            v = v.clone()
+            v[..., 0] = torch.div(v[..., 0], num_views, rounding_mode="floor")
+            d[name] = v
+
+        d["num_views"] = 1
+        d["skip_post_init"] = True
         r = SliceData(**d)
         r.skip_post_init = self.skip_post_init
         return r

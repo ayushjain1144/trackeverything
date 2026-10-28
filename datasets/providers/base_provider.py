@@ -409,5 +409,17 @@ class BaseDataProvider(ABC):
             from .tapvid3d_provider import TAPVid3dProvider
 
             return TAPVid3dProvider(cfg, name, override_anno=override_anno)
+        elif name.startswith("multiview_panoptic_studio"):
+            from .multiview_panoptic_studio_provider import (
+                MultiviewPanopticStudioProvider,
+            )
+
+            return MultiviewPanopticStudioProvider(
+                cfg, name, override_anno=override_anno
+            )
+        elif name.startswith("multiview_dexycb"):
+            from .multiview_dexycb_provider import MultiviewDexYCBProvider
+
+            return MultiviewDexYCBProvider(cfg, name, override_anno=override_anno)
         else:
             raise ValueError(f"Unknown provider: {name}")

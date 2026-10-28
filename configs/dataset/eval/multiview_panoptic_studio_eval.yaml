@@ -1,0 +1,20 @@
+defaults:
+  - eval_base
+
+provider_config:
+  name: multiview_panoptic_studio
+  stride: 1
+  override_anno: null
+  config:
+    data_root: ${data_path:panoptic_multiview_root}
+    traj_per_sample: 10000
+    seed: 72
+    max_videos: null
+    views_to_return: null
+
+frames_per_sample: -1
+query_mode: first_visible
+scale_factor: 4
+transform:
+  - name: set_roi
+    kwargs: {}

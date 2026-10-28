@@ -39,10 +39,21 @@ def from_config(cfg: Union[DictConfig, str], **kwargs) -> nn.Module:
     if name in ("track_everything", "track_everything_clean"):
         from .track_everything import TrackEverything
         return TrackEverything(**kwargs)
+    if name == "track_everything_multiview":
+        from .track_everything_multiview import TrackEverythingMultiView
+        return TrackEverythingMultiView(**kwargs)
     raise ValueError(f"Model {name} not supported")
 
 
-def from_pretrained(ckpt_path: Union[str, Path]) -> Tuple[nn.Module, DictConfig]:
+def from_pretrained(
+    ckpt_path: Union[str, Path], multiview: bool = False
+) -> Tuple[nn.Module, DictConfig]:
+    """Load a checkpoint.
+
+    With ``multiview=True`` the weights are loaded into
+    ``TrackEverythingMultiView``, which accepts ``num_views`` at inference. The
+    two classes share the same parameters, so any checkpoint works either way.
+    """
     assert Path(ckpt_path).exists(), f"Checkpoint {ckpt_path} does not exist"
     ckpt = torch.load(ckpt_path, map_location="cpu", weights_only=False)
 
@@ -53,6 +64,9 @@ def from_pretrained(ckpt_path: Union[str, Path]) -> Tuple[nn.Module, DictConfig]
         if model_cfg is not None and "encoder" in model_cfg:
             with open_dict(cfg):
                 cfg["model"]["encoder"]["pretrained"] = False
+        if multiview:
+            with open_dict(cfg):
+                cfg["model"]["name"] = "track_everything_multiview"
         model = from_config(cfg["model"], image_size=cfg.resolution)
         missing, unexpected = model.load_state_dict(ckpt["weight"], strict=True)
         if missing:

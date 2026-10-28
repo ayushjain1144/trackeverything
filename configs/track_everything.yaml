@@ -17,6 +17,8 @@ defaults:
   - dataset/eval/drivetrack_minival_megasam@test_datasets.drivetrack_minival_megasam
   - dataset/eval/drivetrack_full_gt@test_datasets.drivetrack_full_gt
   - dataset/eval/drivetrack_full_megasam@test_datasets.drivetrack_full_megasam
+  - dataset/eval/multiview_panoptic_studio_eval@test_datasets.multiview_panoptic_studio_eval
+  - dataset/eval/multiview_dexycb_eval@test_datasets.multiview_dexycb_eval
   - model: track_everything
   - override model/encoder: dinov3
   - override hydra/hydra_logging: none

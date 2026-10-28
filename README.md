@@ -23,6 +23,10 @@
 
 </div>
 
+## Updates
+
+- **Oct 2026**: Added experimental multiview inference. See [Multiview Inference](docs/multiview_inference.md).
+
 ## Overview
 
 TrackEverything tracks dense 3D points across long video sequences. Given RGB frames along with depth and camera poses, it builds and maintains a persistent, de-duplicated 3D scene representation. Trajectories are refined in 3D across temporal windows, and points are classified as static or dynamic.
@@ -149,6 +153,20 @@ python -m trackeverything.demo \
   --extrinsics_path path/to/extrinsics.npy
 ```
 
+### 5. Multiple Synchronized Cameras
+
+Pass one video per camera, separated by commas. One 2D track video is written
+per camera:
+
+```bash
+python -m trackeverything.demo_multiview \
+  --video cam0.mp4,cam1.mp4,cam2.mp4,cam3.mp4 \
+  --save_dense_2d_video
+```
+
+This is experimental and inference only. See [Multiview Inference](docs/multiview_inference.md)
+for the details and for multiview evaluation.
+
 For signed-log voxelization, memory compression, and other advanced options, see the [Advanced Usage Guide](docs/advanced_usage.md).
 
 ---
@@ -166,6 +184,8 @@ pod_root: /path/to/point_odyssey
 dynamic_replica_train_root: /path/to/dynamic_replica
 dynamic_replica_val_root: /path/to/dynamic_replica
 tapvid3d_root: /path/to/tapvid3d
+panoptic_multiview_root: /path/to/panoptic-multiview
+dexycb_multiview_root: /path/to/dex-ycb-multiview
 ```
 
 For complete instructions on dataset setup, see:
@@ -205,6 +225,18 @@ bash scripts/main.sh \
 | **TAPVid3D ADT** | `adt_minival_gt`, `adt_full_gt` | `adt_minival_megasam`, `adt_full_megasam` |
 | **TAP-Vid3D Panoptic Studio** | - | `pstudio_minival_megasam`, `pstudio_full_megasam` |
 | **TAP-Vid3D DriveTrack** | - | `drivetrack_minival_megasam`, `drivetrack_full_megasam` |
+| **Multiview Panoptic Studio** | `multiview_panoptic_studio_eval` | — |
+| **Multiview DexYCB** | `multiview_dexycb_eval` | — |
+
+The two multiview sets are run with [`scripts/eval_multiview.sh`](scripts/eval_multiview.sh),
+which sets the flags they need:
+
+```bash
+CKPT=checkpoints/model.pth DATASET=panoptic VIEWS=4 FRAMES=16 \
+  bash scripts/eval_multiview.sh
+```
+
+See [Multiview Inference](docs/multiview_inference.md).
 
 ---
 
@@ -242,6 +274,7 @@ Detailed documentation and guides are available in [`docs/`](docs/):
 
 - **[Dataset Preparation & Processing](docs/data_processing.md)**: Dataset paths, fast annotation splitting, precomputing geometry, and complete documentation on the Point Odyssey annotation fixes.
 - **[Advanced Usage Guide](docs/advanced_usage.md)**: Voxelization modes (`uniform` vs. `signedlog`), memory compression for ultra-long videos, custom geometry, and Hydra overrides.
+- **[Multiview Inference](docs/multiview_inference.md)**: Running the tracker on several synchronized cameras, and multiview evaluation.
 - **[Frequently Asked Questions (FAQ)](docs/faq.md)**: Troubleshooting environment issues, memory optimization, coordinate conventions, and common questions.
 
 ---

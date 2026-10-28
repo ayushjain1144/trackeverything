@@ -243,12 +243,24 @@ class EvalDataset(BaseDataset):
                 est_trajs_3d, est_extrinsics, est_query_point
             )
 
+        num_views = int(getattr(raw_slice_data, "num_views", None) or 1)
+
         if self.query_mode == "first_visible":
             # assert (
             #     gt_query_point is None
             # ), "You should not override query point provided by the eval dataset"
 
-            to_query = (raw_slice_data.visibs & raw_slice_data.valids).any(0)
+            # With several cameras the time axis holds num_views images per
+            # timestep. Restricting queries to camera 0 puts query times on
+            # timestep boundaries and keeps the evaluated track set the same one
+            # the single-view run sees.
+            queryable = raw_slice_data.visibs & raw_slice_data.valids
+            if num_views > 1:
+                cam0 = np.zeros(queryable.shape[0], dtype=bool)
+                cam0[::num_views] = True
+                queryable = queryable & cam0[:, None]
+
+            to_query = queryable.any(0)
             if not to_query.any():
                 # POD motion/OOB filters (or depth-range cuts) can wipe every
                 # track in a long window; skip rather than crash later on empty
@@ -267,7 +279,7 @@ class EvalDataset(BaseDataset):
             visibs = visibs[:, to_query]  # type: ignore
             valids = valids[:, to_query]  # type: ignore
 
-            query_frames = (visibs & valids).argmax(0)
+            query_frames = queryable[:, to_query].argmax(0)
             gt_query_coords = gt_trajs_3d[query_frames, np.arange(gt_trajs_3d.shape[1])]
             est_query_coords = est_trajs_3d[
                 query_frames, np.arange(est_trajs_3d.shape[1])
@@ -314,6 +326,14 @@ class EvalDataset(BaseDataset):
 
         dense_trajs_3d, dense_valids, dense_visibs, dense_dynamic, tgt_time_step_scenes = None, None, None, None, None
         dense_geom_raw, dense_src_idx_map = None, None
+        if self.compute_dense_trajs_3d and num_views > 1:
+            # Dense GT is (T, T, 3, H, W) over the flat time axis, so it grows
+            # by num_views^2 and its target axis no longer means "timestep".
+            raise ValueError(
+                f"compute_dense_trajs_3d is not supported with num_views="
+                f"{num_views}; pass "
+                "+eval.dataset_overrides.compute_dense_trajs_3d=false"
+            )
         if self.compute_dense_trajs_3d:
             if self.eval_on_key_frames is not None:
                 time_steps = self.eval_on_key_frames
@@ -642,6 +662,7 @@ class EvalDataset(BaseDataset):
             est_query_point=torch.from_numpy(est_query_point),
             orig_resolution=torch.from_numpy(raw_slice_data.orig_resolution),
             same_scale=raw_slice_data.same_scale,
+            num_views=num_views,
             flags=raw_slice_data.flags.copy(),
             segmentation=torch.from_numpy(segmentation.copy())
             if segmentation is not None
