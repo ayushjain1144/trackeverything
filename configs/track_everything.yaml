@@ -60,6 +60,8 @@ criterion:
   traj_weight: 1.0
   traj_2d_weight: 1.0
   dynamic_bce_weight: 0.015
+  balanced_dynamic_bce: false
+  dynamic_bce_pos_weight: 3.0
   compute_2d_loss: true
   log_loss: true
   use_conf_regression_loss: false

@@ -112,6 +112,8 @@ class AllTrajectoryCriterion:
         query_coord_weight: float = 1.0,
         dynamic_filter_threshold: float = 0.01,
         skip_dense_loss: bool = False,
+        balanced_dynamic_bce: bool = False,
+        dynamic_bce_pos_weight: float = 3.0,
     ):
         self.gamma = gamma
         self.traj_weight = traj_weight
@@ -142,6 +144,8 @@ class AllTrajectoryCriterion:
         self.query_coord_weight = query_coord_weight
         self.dynamic_filter_threshold = dynamic_filter_threshold
         self.skip_dense_loss = skip_dense_loss
+        self.balanced_dynamic_bce = balanced_dynamic_bce
+        self.dynamic_bce_pos_weight = dynamic_bce_pos_weight
 
     @staticmethod
     def _align_valids_to_window(valids, trajs_3d, window_trajs, start, end):
@@ -361,11 +365,20 @@ class AllTrajectoryCriterion:
     def _compute_balanced_dynamic_bce(
         self, pred_logits, gt_dynamic, valid, iter_idx, num_iters: int
     ) -> torch.Tensor:
-        """Static/dynamic BCE with per-class means so static points don't dominate."""
+        """Static/dynamic BCE pooled over valid points, dynamics up-weighted."""
         gamma_weight = self.gamma ** (num_iters - 1 - iter_idx)
+        bce_kwargs = {}
+        if self.dynamic_bce_pos_weight != 1.0:
+            bce_kwargs["pos_weight"] = pred_logits.new_tensor(
+                self.dynamic_bce_pos_weight
+            )
         bce = F.binary_cross_entropy_with_logits(
-            pred_logits, gt_dynamic.float(), reduction="none"
+            pred_logits, gt_dynamic.float(), reduction="none", **bce_kwargs
         )
+        if not self.balanced_dynamic_bce:
+            return gamma_weight * (
+                (bce * valid.float()).sum() / valid.sum().clamp(min=1)
+            )
         dynamic_mask = valid & (gt_dynamic > 0.5)
         static_mask = valid & (gt_dynamic <= 0.5)
         loss_dynamic = (bce * dynamic_mask.float()).sum() / (dynamic_mask.sum() + 1e-4)

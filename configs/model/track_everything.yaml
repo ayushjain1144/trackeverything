@@ -10,9 +10,10 @@ center_rgb: false
 voxelize: true
 voxel_size: 0.02
 voxel_mode: uniform
-voxelize_on_endpoints: false
+# These two must match the released checkpoint; see the commit message.
+voxelize_on_endpoints: true
 residual_unvoxelize: true
-memory_merge_mode: all
+memory_merge_mode: srctgt
 use_waft: true
 use_query_points: true
 use_only_query_points: false
