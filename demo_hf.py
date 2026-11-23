@@ -860,7 +860,9 @@ class TrackEverything:
 
         # Run inference
         logger.info("Running model inference (%d frames, mode=%s)...", video_t.shape[0], mode)
-        with torch.no_grad():
+        with torch.no_grad(), torch.autocast(
+            "cuda", dtype=torch.bfloat16, enabled=torch.device(self.device).type == "cuda"
+        ):
             preds, _ = self.model(
                 rgb_obs=video_t[None],
                 depth_obs=depths_t[None],
