@@ -80,6 +80,7 @@ To try the model on your own video without installing anything, use the hosted [
 We provide two entry points for inference depending on your workflow:
 - **`demo.py`**: Runs tracking on a video and visualizes the results (Rerun 3D viewer, 2D overlay MP4 videos, optional Weights & Biases logging).
 - **`demo_hf.py`**: Python API and lightweight CLI to run inference and extract/save track tensors without visualization dependencies.
+- **`demo_query.py`**: Tracks a grid of query points and visualizes just those trajectories (shows how to use the query branch).
 
 ### 1. Visual Demo (`demo.py`)
 
@@ -140,6 +141,19 @@ python -m trackeverything.demo_hf \
 ```
 
 Query points never get merged with other points, so they can sometimes retain higher resolution than the dense tracks. Please see the paper for more details.
+
+Coordinates are `[frame_idx, x, y]` in input-video pixels, where `x` is the column and `y` is the
+row, and `frame_idx` indexes the frames left after `--start_frame` / `--frame_stride`.
+
+To track a regular grid of points and visualize them instead of supplying your own, use
+`demo_query.py`. It writes an `output.rrd` and a 2D overlay video, and logs the overlay to
+Weights & Biases with `--use_wandb`:
+
+```bash
+python -m trackeverything.demo_query \
+  --video path/to/video.mp4 \
+  --grid_size 32
+```
 
 ### 4. Supplying Custom Depth and Cameras
 
